@@ -1,18 +1,18 @@
-### 1. Util Functions
+### Util Functions
     - get_word_tag: Returns words and tags from the corpus. If some words are not in the vocabulary (which consists of HMM words), this function handles them.
     - preprocess: Checks for unknown words in the test corpus.
     - assign_unk: Handles unknown word tokens using morphology rules.
         
-### 2. vocab
+### Vocab
     - Stores words that appear more than twice and manages unknown tokens for rare words.
     - Unknown tokens (e.g., --unk-verb--, --unk-noun--) replace unknown words in both the training and test corpus, and are incorporated into emission, transition, and tag data structures.
     
-### 3. dictionaries 
+### Dictionaries 
     - trans_counts: Records counts of transitions between tags.
     - emis_counts: Records counts of word occurrences given a tag.
     - tag_counts: Records counts of individual tags.
 
-### 4. 2 matrixes 
+### Matrix
     - trans_matrix:
         Stores transition probabilities between tags, computed with smoothing
         The smoothing:
@@ -32,7 +32,7 @@
         𝐶(𝑡𝑖,𝑤𝑜𝑟𝑑𝑖): emis_counts
         𝐶(𝑡𝑖): tag_counts
         
-### 5. viterbi forward
+### Viterbi forward
     - best_probs:
         n x t matrix (n is num of unique POS tags and t is num of words in corpus)
         the best prob for the given current word's POS tag and the position.
@@ -42,7 +42,7 @@
     - algorithm:
         Computes the probability of each possible tag for each word and tracks the best probabilities.
 
-### 6. viterbi backward
+### Viterbi backward
     - pred: 
         It is an array(same size as corpus) that the proper pos tags will be entered.
     - z:
