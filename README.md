@@ -1,35 +1,21 @@
 ### For loading data from corpus, the address of corpus might be different.
 1. Util Functions
-    I used some helper functions for handling oov and getting tags & words from corpus.
-    For the OOV, I used Molphology rules used to assign unknown word tokens.
-    get_word_tag:
-        It is a function that returns words & tags from corpus.
-        If some words is not in vocab(vocab is hmm words/ I will explain it further later.) 
-    preprocess:
-        It is a function checks the unknown words from test corpus.
-    assign_unk:
-        It is a function that returns unknown word tokens.
+    - get_word_tag: Returns words and tags from the corpus. If some words are not in the vocabulary (which consists of HMM words), this function handles them.
+    - preprocess: Checks for unknown words in the test corpus.
+    - assign_unk: Handles unknown word tokens using morphology rules.
         
 2. vocab
-    I stores the words that are used more than twice and unknown tokens for unknown words.
-    A set of unknown-tokens, such as '--unk-verb--' or '--unk-noun--' will replace the unknown words in both the training and test corpus and will appear in the emission, transmission and tag data structures.
+    Stores words that appear more than twice and manages unknown tokens for rare words.
+    Unknown tokens (e.g., --unk-verb--, --unk-noun--) replace unknown words in both the training and test corpus, and are incorporated into emission, transition, and tag data structures.
     
 3. dictionaries 
-    By using helper functions, create three different dictionaries.
-    trans_counts:
-        keys : sets of previous tag and current tag
-        values : counts of each set
-    emis_counts:
-        keys : sets of tag and word
-        values : counts of tag and corresponding word
-    tag_counts:
-        keys : tags
-        values : counts of each tag
+    - trans_counts: Records counts of transitions between tags.
+    - emis_counts: Records counts of word occurrences given a tag.
+    - tag_counts: Records counts of individual tags.
 
 4. 2 matrixes 
     trans_matrix:
-        stores the probability to go from one part of speech to another.
-        Compute the prob by smoothing.
+        Stores transition probabilities between tags, computed with smoothing
         The smoothing:
             𝑃(𝑡𝑖|𝑡𝑖−1)=𝐶(𝑡𝑖−1,𝑡𝑖)+𝛼 / 𝐶(𝑡𝑖−1)+𝛼∗𝑁
         𝛼: alpha(constant value)
@@ -38,8 +24,8 @@
         𝐶(𝑡𝑖−1): tag_counts
     
     emis_matrix:
+        Stores emission probabilities of words given tags, also computed with smoothing:
         Dimension (num_tags, N), where num_tags is the number of possible parts-of-speech tags.
-        Compute the prob by smoothing.
         The smoothing:
             𝑃(𝑤𝑖|𝑡𝑖)=𝐶(𝑡𝑖,𝑤𝑜𝑟𝑑𝑖)+𝛼 / 𝐶(𝑡𝑖)+𝛼∗𝑁
         𝛼: alpha(constant value)
@@ -55,8 +41,7 @@
         n x t matrix (n is num of unique POS tags and t is num of words in corpus)
         the unique integer ID of the best prob
     algorithm:
-        Walk forward through the corpus.
-        For each word, compute a probability for each possible tag.
+        Computes the probability of each possible tag for each word and tracks the best probabilities.
 
 6. viterbi backward
     pred: 
@@ -64,7 +49,7 @@
     z:
         It is an array that will be used for saving an index of the best prob thru best path.
     algorithm:
-         set the last element of z to argmax(best_probs[:,-1]) and go backwards thru best_paths and find the index of best prob.
+         set the last element of z to argmax(best_probs[:,-1]) and go backwards thru best_paths to find the index of best prob.
          Then save proper pos tag into pred.
          
 citation:
